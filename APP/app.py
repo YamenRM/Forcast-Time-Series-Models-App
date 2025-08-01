@@ -45,6 +45,17 @@ if target_variable is None:
     st.error("Please select a target variable.")
     st.stop()
 
+# convert the target variable to numeric
+data[target_variable] = pd.to_numeric(data[target_variable], errors='coerce')
+
+# handel missing values in the target variable
+data[target_variable].fillna(method='ffill', inplace=True)
+
+# Check if the target variable has enough data points
+if data[target_variable].isnull().all():
+    st.error(f"The target variable '{target_variable}' does not have enough data points. Please check your dataset.")
+    st.stop()
+
 # Split the data into training and testing sets for the last 60 days
 train_size = int(len(data) - 60)
 train_data = data.iloc[:train_size]
